@@ -9,7 +9,7 @@ interface DayContent {
   startTime: string
   finishTime?: string
   budget?: string
-  note: string
+  note?: string
 }
 
 class Schedule {
@@ -48,15 +48,18 @@ const Home: NextPage = () => {
   }, [])
 
   const generateSelectDayBtn = (departureDate: Date, returnDate: Date) => {
-    const baseClass = "btn join-item"
-    const getClass = () => {
-      return baseClass
+    const baseClass = "btn btn-secondary join-item"
+    const getClass = (d: number) => {
+      if (d != day) {
+        return baseClass + " btn-outline"
+      }
+      return baseClass + ""
     }
     const termDay = ((returnDate.getDate() - departureDate.getDate())) + 1
     const selectDayBtns = []
     for (let d=1; d <= termDay; d++) {
       selectDayBtns.push(
-        <button type="button" onClick={() => {setDay(d)}} className={getClass()} key={d}>{d}日目</button>
+        <button type="button" onClick={() => {setDay(d)}} className={getClass(d)} key={d}>{d}日目</button>
       )
     }
 
@@ -103,7 +106,7 @@ const Home: NextPage = () => {
         <div className="overflow-x-auto">
           <table className="table">
             <thead>
-              <tr>
+              <tr className="text-center">
                 <th>開始</th>
                 <th>終了</th>
                 <th>内容</th>
@@ -112,13 +115,13 @@ const Home: NextPage = () => {
               </tr>
             </thead>
             <tbody>
-            {getTodaySchedule(day).map(dayContent => (
-              <tr>
-                <td>{dayContent.startTime}</td>
-                <td>{dayContent.finishTime}</td>
+            {getTodaySchedule(day).map((dayContent, index) => (
+              <tr key={String(index)}>
+                <td className="text-center">{dayContent.startTime}</td>
+                <td className="text-center">{dayContent?.finishTime}</td>
                 <td>{dayContent.content}</td>
-                <td>{dayContent.budget}</td>
-                <td>{dayContent.note}</td>
+                <td className="text-right">{dayContent?.budget}{dayContent.budget && "円"}</td>
+                <td>{dayContent?.note}</td>
               </tr>
             ))}
             </tbody>
